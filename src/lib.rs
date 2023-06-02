@@ -7,12 +7,16 @@
 
 use core::panic::PanicInfo;
 
+pub mod gdt;
+pub mod interrupts;
 pub mod serial;
 pub mod vga_buffer;
-pub mod interrupts;
 
 pub fn init() {
+    gdt::init();
     interrupts::init_idt();
+    unsafe { interrupts::PICS.lock().initialize(); }
+    x86_64::instructions::interrupts::enable();
 }
 
 pub trait Testable {
@@ -42,7 +46,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
+    crate::halt()
 }
 
 /// Entry point for `cargo test`
@@ -51,7 +55,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     init();
     test_main();
-    loop {}
+    crate::halt()
 }
 
 #[cfg(test)]
@@ -76,3 +80,8 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
     }
 }
 
+pub fn halt() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
+}

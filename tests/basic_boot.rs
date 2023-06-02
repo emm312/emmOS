@@ -5,15 +5,15 @@
 #![test_runner(emmos::test_runner)]
 
 use core::panic::PanicInfo;
-use emmos::println;
+use emmos::{println, serial_println};
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
+    serial_println!("basic");
     test_main();
 
     loop {}
 }
-
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
