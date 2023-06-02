@@ -1,0 +1,21 @@
+Building bootloader
+Running: `qemu-system-x86_64 -drive format=raw,file=/Users/emm312/Desktop/coding/rust/emmos/target/x86_64-emmos/debug/deps/bootimage-emmos-68fa9b9e748e9da3.bin -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 -serial stdio -display none`
+Running 3 tests
+emmos::vga_buffer::test_println_many...	[ok]
+emmos::vga_buffer::test_println_output...	[ok]
+emmos::vga_buffer::test_println_simple...	[ok]
+Building bootloader
+Running: `qemu-system-x86_64 -drive format=raw,file=/Users/emm312/Desktop/coding/rust/emmos/target/x86_64-emmos/debug/deps/bootimage-emmos-f45470884476cac3.bin -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 -serial stdio -display none`
+Running 4 tests
+emmos::trivial_assertion...	[ok]
+emmos::vga_buffer::test_println_many...	[ok]
+emmos::vga_buffer::test_println_output...	[ok]
+emmos::vga_buffer::test_println_simple...	[ok]
+Building bootloader
+Running: `qemu-system-x86_64 -drive format=raw,file=/Users/emm312/Desktop/coding/rust/emmos/target/x86_64-emmos/debug/deps/bootimage-basic_boot-78006c84575bd2de.bin -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 -serial stdio -display none`
+Running 1 tests
+basic_boot::test_println...	[ok]
+Building bootloader
+Running: `qemu-system-x86_64 -drive format=raw,file=/Users/emm312/Desktop/coding/rust/emmos/target/x86_64-emmos/debug/deps/bootimage-should_panic-5ebcbaf9adae42a8.bin -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 -serial stdio -display none`
+Running 1 tests
+should_panic::should_fail...	[ok]
