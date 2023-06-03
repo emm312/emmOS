@@ -7,15 +7,27 @@
 
 use core::panic::PanicInfo;
 
+extern crate alloc;
+
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
 pub mod gdt;
 pub mod interrupts;
+pub mod memory;
 pub mod serial;
 pub mod vga_buffer;
+pub mod allocator;
+
+#[cfg(test)]
+entry_point!(kernel_main);
 
 pub fn init() {
     gdt::init();
     interrupts::init_idt();
-    unsafe { interrupts::PICS.lock().initialize(); }
+    unsafe {
+        interrupts::PICS.lock().initialize();
+    }
     x86_64::instructions::interrupts::enable();
 }
 
@@ -52,7 +64,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 /// Entry point for `cargo test`
 #[cfg(test)]
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn kernel_main(_boot_info: &'static BootInfo) -> ! {
     init();
     test_main();
     crate::halt()
