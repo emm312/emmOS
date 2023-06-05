@@ -4,30 +4,37 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 #![feature(abi_x86_interrupt)]
+#![deny(unsafe_op_in_unsafe_fn)]
 
 use core::panic::PanicInfo;
 
-extern crate alloc;
+// extern crate alloc;
 
+use bootloader_api::config::Mapping;
+use bootloader_api::BootloaderConfig;
 #[cfg(test)]
-use bootloader::{entry_point, BootInfo};
+use bootloader_api::{entry_point, BootInfo};
 
 pub mod gdt;
 pub mod interrupts;
-pub mod memory;
+// pub mod memory;
 pub mod serial;
 pub mod vga_buffer;
-pub mod allocator;
+// pub mod allocator;
+pub mod globals;
+
+pub static BOOTLOADER_CONFIG: BootloaderConfig = {
+    let mut config = BootloaderConfig::new_default();
+    config.mappings.physical_memory = Some(Mapping::Dynamic);
+    config
+};
 
 #[cfg(test)]
-entry_point!(kernel_main);
+entry_point!(kernel_main, config = &BOOTLOADER_CONFIG);
 
 pub fn init() {
     gdt::init();
     interrupts::init_idt();
-    unsafe {
-        interrupts::PICS.lock().initialize();
-    }
     x86_64::instructions::interrupts::enable();
 }
 
@@ -64,7 +71,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 /// Entry point for `cargo test`
 #[cfg(test)]
 #[no_mangle]
-fn kernel_main(_boot_info: &'static BootInfo) -> ! {
+fn kernel_main(_boot_info: &'static mut BootInfo) -> ! {
     init();
     test_main();
     crate::halt()
